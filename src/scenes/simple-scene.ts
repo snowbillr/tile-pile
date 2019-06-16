@@ -1,10 +1,43 @@
-const tileIndices = {
+import 'phaser';
 
+const tileIndices = {
+  Y: 0,
+  R: 1,
+  K: 2,
+  D: 3,
+
+  X: 8,
+  Q: 9,
+  J: 10,
+  C: 11,
+
+  W: 16,
+  P: 17,
+  I: 18,
+  B: 19,
+
+  V: 24,
+  O: 25,
+  H: 26,
+  A: 27,
+
+  U: 32,
+  N: 33,
+  G: 34,
+  BLANK: 35,
+
+  T: 40,
+  M: 41,
+  F: 42,
+  L: 43,
+
+  S: 48,
+  Z: 49,
+  E: 50
 };
 
 export class SimpleScene extends Phaser.Scene {
   preload() {
-    // this.load.atlasXML('letters', 'assets/letters/solid_spritesheet.png', 'assets/letters/solid_spritesheet.xml');
     this.load.image('letters', 'assets/letters/solid_spritesheet.png');
   }
 
@@ -15,11 +48,9 @@ export class SimpleScene extends Phaser.Scene {
       width: 10,
       height: 10,
     });
-    const lettersTileset = board.addTilesetImage('letters');
+    const lettersTileset = board.addTilesetImage('letters', undefined, 256, 256, 0, 0);
 
     const lettersLayer = board.createBlankDynamicLayer('letters', lettersTileset);
-    lettersLayer.setScale(0.25)
-
-    lettersLayer.putTileAt(4, 0, 0);
+    lettersLayer.setScale(0.25);
   }
 }
