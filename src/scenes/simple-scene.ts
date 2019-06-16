@@ -1,6 +1,6 @@
 import 'phaser';
 
-const tileIndices = {
+const tileIndices: { [key: string]: number } = {
   Y: 0,
   R: 1,
   K: 2,
