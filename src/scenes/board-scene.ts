@@ -39,9 +39,14 @@ const tileIndices: { [key: string]: number } = {
 export class BoardScene extends Phaser.Scene {
   preload() {
     this.load.image('letters', 'assets/letters/solid_spritesheet.png');
+    this.load.image('empty_letter', 'assets/letters/solid_empty.png');
   }
 
   create() {
+    const boardBackground = this.add.tileSprite(0, 0, 500, 500, 'empty_letter');
+    boardBackground.setOrigin(0, 0);
+    boardBackground.setTileScale(0.25);
+
     const board = this.make.tilemap({
       tileWidth: 256,
       tileHeight: 256,
@@ -52,8 +57,6 @@ export class BoardScene extends Phaser.Scene {
 
     const lettersLayer = board.createBlankDynamicLayer('letters', lettersTileset);
     lettersLayer.setScale(0.25);
-
-    lettersLayer.fill(tileIndices.BLANK);
 
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
       const worldPoint = pointer.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
