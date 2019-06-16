@@ -52,5 +52,15 @@ export class SimpleScene extends Phaser.Scene {
 
     const lettersLayer = board.createBlankDynamicLayer('letters', lettersTileset);
     lettersLayer.setScale(0.25);
+
+    lettersLayer.fill(tileIndices.BLANK);
+
+    this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+      const worldPoint = pointer.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
+      const pointerTileX = board.worldToTileX(worldPoint.x);
+      const pointerTileY = board.worldToTileY(worldPoint.y);
+
+      lettersLayer.putTileAt(tileIndices.A, pointerTileX, pointerTileY);
+    });
   }
 }
