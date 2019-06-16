@@ -36,7 +36,7 @@ const tileIndices: { [key: string]: number } = {
   E: 50
 };
 
-export class SimpleScene extends Phaser.Scene {
+export class BoardScene extends Phaser.Scene {
   preload() {
     this.load.image('letters', 'assets/letters/solid_spritesheet.png');
   }
