@@ -51,7 +51,7 @@ export class BoardScene extends Phaser.Scene {
     const board = new Board<Tile>();
     for (let x = 0; x < width; x++) {
       for (let y = 0; y < height; y++) {
-        board.set(x, y, { value: '' });
+        board.set(x, y, new Tile(''));
       }
     }
 
