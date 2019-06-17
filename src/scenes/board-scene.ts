@@ -1,6 +1,7 @@
 import 'phaser';
 import { Board } from '../models/board';
 import { Tile } from '../models/tile';
+import { TilePool } from '../models/tile-pool';
 
 const tileIndices: { [key: string]: number } = {
   Y: 0,
@@ -54,6 +55,8 @@ export class BoardScene extends Phaser.Scene {
   create() {
     this.createBoardModel();
     this.createBoardView();
+
+    new TilePool();
 
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
       const worldPoint = pointer.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
