@@ -1,6 +1,6 @@
 import 'phaser';
-import { Board } from '../lib/board';
-import { Tile } from '../lib/tile';
+import { Board } from '../models/board';
+import { Tile } from '../models/tile';
 
 const tileIndices: { [key: string]: number } = {
   Y: 0,
