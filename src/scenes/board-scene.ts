@@ -1,4 +1,5 @@
 import 'phaser';
+import { Board } from '../board';
 
 const tileIndices: { [key: string]: number } = {
   Y: 0,
@@ -43,27 +44,52 @@ export class BoardScene extends Phaser.Scene {
   }
 
   create() {
-    const boardBackground = this.add.tileSprite(0, 0, 500, 500, 'empty_letter');
+    const width = 5;
+    const height = 5;
+
+    const board = new Board();
+    for (let x = 0; x < width; x++) {
+      for (let y = 0; y < height; y++) {
+        board.set(x, y, { value: '' });
+      }
+    }
+
+    const boardBackground = this.add.tileSprite(0, 0, 0, 0, 'empty_letter');
     boardBackground.setOrigin(0, 0);
     boardBackground.setTileScale(0.25);
 
-    const board = this.make.tilemap({
+    const boardTilemap = this.make.tilemap({
       tileWidth: 256,
       tileHeight: 256,
-      width: 10,
-      height: 10,
+      width,
+      height,
     });
-    const lettersTileset = board.addTilesetImage('letters', undefined, 256, 256, 0, 0);
+    const lettersTileset = boardTilemap.addTilesetImage('letters', undefined, 256, 256, 0, 0);
 
-    const lettersLayer = board.createBlankDynamicLayer('letters', lettersTileset);
+    const lettersLayer = boardTilemap.createBlankDynamicLayer('letters', lettersTileset);
     lettersLayer.setScale(0.25);
 
-    this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-      const worldPoint = pointer.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
-      const pointerTileX = board.worldToTileX(worldPoint.x);
-      const pointerTileY = board.worldToTileY(worldPoint.y);
+    boardBackground.setSize(lettersLayer.displayWidth, lettersLayer.displayHeight)
 
-      lettersLayer.putTileAt(tileIndices.A, pointerTileX, pointerTileY);
+    const letterOrder = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+    this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+      console.log('down');
+      const worldPoint = pointer.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
+
+      const tileX = boardTilemap.worldToTileX(worldPoint.x);
+      const tileY = boardTilemap.worldToTileY(worldPoint.y);
+
+      const boardTile = board.get(tileX, tileY);
+
+      if (boardTile.value == '') {
+        boardTile.value = 'A';
+      } else {
+        const nextValue = letterOrder[letterOrder.indexOf(boardTile.value) + 1];
+        boardTile.value = nextValue;
+      }
+
+      lettersLayer.putTileAt(tileIndices[boardTile.value], tileX, tileY);
     });
   }
 }
