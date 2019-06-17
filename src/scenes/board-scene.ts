@@ -1,5 +1,6 @@
 import 'phaser';
-import { Board } from '../board';
+import { Board } from '../lib/board';
+import { Tile } from '../lib/tile';
 
 const tileIndices: { [key: string]: number } = {
   Y: 0,
@@ -47,7 +48,7 @@ export class BoardScene extends Phaser.Scene {
     const width = 5;
     const height = 5;
 
-    const board = new Board();
+    const board = new Board<Tile>();
     for (let x = 0; x < width; x++) {
       for (let y = 0; y < height; y++) {
         board.set(x, y, { value: '' });
@@ -71,10 +72,7 @@ export class BoardScene extends Phaser.Scene {
 
     boardBackground.setSize(lettersLayer.displayWidth, lettersLayer.displayHeight)
 
-    const letterOrder = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-      console.log('down');
       const worldPoint = pointer.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
 
       const tileX = boardTilemap.worldToTileX(worldPoint.x);
@@ -82,6 +80,7 @@ export class BoardScene extends Phaser.Scene {
 
       const boardTile = board.get(tileX, tileY);
 
+      const letterOrder = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
       if (boardTile.value == '') {
         boardTile.value = 'A';
       } else {
