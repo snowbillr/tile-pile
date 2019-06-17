@@ -38,47 +38,30 @@ const tileIndices: { [key: string]: number } = {
   E: 50
 };
 
+const WIDTH = 5;
+const HEIGHT = 5;
+
 export class BoardScene extends Phaser.Scene {
+  private board!: Board<Tile>;
+  private boardTilemap!: Phaser.Tilemaps.Tilemap;
+  private lettersLayer!: Phaser.Tilemaps.DynamicTilemapLayer;
+
   preload() {
     this.load.image('letters', 'assets/letters/solid_spritesheet.png');
     this.load.image('empty_letter', 'assets/letters/solid_empty.png');
   }
 
   create() {
-    const width = 5;
-    const height = 5;
-
-    const board = new Board<Tile>();
-    for (let x = 0; x < width; x++) {
-      for (let y = 0; y < height; y++) {
-        board.set(x, y, new Tile(''));
-      }
-    }
-
-    const boardBackground = this.add.tileSprite(0, 0, 0, 0, 'empty_letter');
-    boardBackground.setOrigin(0, 0);
-    boardBackground.setTileScale(0.25);
-
-    const boardTilemap = this.make.tilemap({
-      tileWidth: 256,
-      tileHeight: 256,
-      width,
-      height,
-    });
-    const lettersTileset = boardTilemap.addTilesetImage('letters', undefined, 256, 256, 0, 0);
-
-    const lettersLayer = boardTilemap.createBlankDynamicLayer('letters', lettersTileset);
-    lettersLayer.setScale(0.25);
-
-    boardBackground.setSize(lettersLayer.displayWidth, lettersLayer.displayHeight)
+    this.createBoardModel();
+    this.createBoardView();
 
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
       const worldPoint = pointer.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
 
-      const tileX = boardTilemap.worldToTileX(worldPoint.x);
-      const tileY = boardTilemap.worldToTileY(worldPoint.y);
+      const tileX = this.boardTilemap.worldToTileX(worldPoint.x);
+      const tileY = this.boardTilemap.worldToTileY(worldPoint.y);
 
-      const boardTile = board.get(tileX, tileY);
+      const boardTile = this.board.get(tileX, tileY);
 
       const letterOrder = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
       if (boardTile.value == '') {
@@ -88,7 +71,35 @@ export class BoardScene extends Phaser.Scene {
         boardTile.value = nextValue;
       }
 
-      lettersLayer.putTileAt(tileIndices[boardTile.value], tileX, tileY);
+      this.lettersLayer.putTileAt(tileIndices[boardTile.value], tileX, tileY);
     });
+  }
+
+  private createBoardModel() {
+    this.board = new Board<Tile>();
+    for (let x = 0; x < WIDTH; x++) {
+      for (let y = 0; y < HEIGHT; y++) {
+        this.board.set(x, y, new Tile(''));
+      }
+    }
+  }
+
+  private createBoardView() {
+    const boardBackground = this.add.tileSprite(0, 0, 0, 0, 'empty_letter');
+    boardBackground.setOrigin(0, 0);
+    boardBackground.setTileScale(0.25);
+
+    this.boardTilemap = this.make.tilemap({
+      tileWidth: 256,
+      tileHeight: 256,
+      width: WIDTH,
+      height: HEIGHT,
+    });
+    const lettersTileset = this.boardTilemap.addTilesetImage('letters', undefined, 256, 256, 0, 0);
+
+    this.lettersLayer = this.boardTilemap.createBlankDynamicLayer('letters', lettersTileset);
+    this.lettersLayer.setScale(0.25);
+
+    boardBackground.setSize(this.lettersLayer.displayWidth, this.lettersLayer.displayHeight)
   }
 }
